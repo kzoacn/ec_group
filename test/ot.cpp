@@ -1,5 +1,5 @@
 #include <iostream>
-#include "group.hpp"
+#include "ec_group/group.h"
 
 using namespace std;
 
@@ -10,12 +10,12 @@ string H(const Group &G,const Point &p){
 }
 
 string E(string key,string m){
-    for(int i=0;i<m.length();i++)
+    for(int i=0;i<(int)m.length();i++)
         m[i]^=key[i];
     return m;
 }
 string D(string key,string c){
-    for(int i=0;i<c.length();i++)
+    for(int i=0;i<(int)c.length();i++)
         c[i]^=key[i];
     return c;
 }
@@ -29,12 +29,15 @@ string ot(string m[],int c){
     //stupid random
     
     Group G(NID_secp256k1);
+
+
     Point A,B;
     Point g;
     G.init(A);
     G.init(B);
     G.init(g);
     G.get_generator(g);
+
 
     A=g;
 
@@ -84,7 +87,6 @@ string ot(string m[],int c){
 
 int main(){
     
-    Group group(NID_secp256k1);
 
     string m[2];
     m[0]="hello";

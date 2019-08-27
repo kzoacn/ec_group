@@ -1,5 +1,5 @@
-#ifndef GROUP
-#define GROUP
+#ifndef GROUP_H
+#define GROUP_H
 
 #include "openssl/ec.h"
 #include "openssl/bn.h"
@@ -40,6 +40,16 @@ public:
         memcpy(p_str, s.c_str(), s.length());
         p_str[s.length()] = 0;
         BN_dec2bn(&n, p_str);
+        delete[] p_str;
+    }
+    void from_hex(const string &s)
+    {
+
+        char *p_str;
+        p_str = new char[s.length() + 1];
+        memcpy(p_str, s.c_str(), s.length());
+        p_str[s.length()] = 0;
+        BN_hex2bn(&n, p_str);
         delete[] p_str;
     }
     string to_hex()
@@ -93,6 +103,7 @@ public:
     void inv(Point &res, const Point &p);
     void mul(Point &res, const Point &lhs, const BigInt &m);
     string to_hex(const Point &p) const;
+    void from_hex(Point &p,const string &s) const;
 };
 
 class Point
@@ -122,33 +133,4 @@ public:
     friend class Group;
 };
 
-void Group::get_generator(Point &g)
-{
-    EC_POINT_copy(g.p, EC_GROUP_get0_generator(ec_group));
-}
-
-void Group::init(Point &p)
-{
-    p.p = EC_POINT_new(ec_group);
-}
-void Group::add(Point &res, const Point &lhs, const Point &rhs)
-{
-    EC_POINT_add(ec_group, res.p, lhs.p, rhs.p, NULL);
-}
-
-void Group::inv(Point &res, const Point &p)
-{
-    res = p;
-    EC_POINT_invert(ec_group, res.p, NULL);
-}
-void Group::mul(Point &res, const Point &lhs, const BigInt &m)
-{
-    EC_POINT_mul(ec_group, res.p, NULL, lhs.p, m.n, NULL);
-}
-string Group::to_hex(const Point &p) const
-{
-    BigInt x, y;
-    EC_POINT_get_affine_coordinates_GFp(ec_group, p.p, x.n, y.n, NULL);
-    return "(" + x.to_hex() + "," + y.to_hex() + ")";
-}
 #endif

@@ -5,8 +5,8 @@ using namespace std;
 
 
 //stupid hash
-string H(const Point &p){
-    return p.to_hex();
+string H(const Group &G,const Point &p){
+    return G.to_hex(p);
 }
 
 string E(string key,string m){
@@ -28,47 +28,53 @@ string ot(string m[],int c){
     b.from_dec("4134213");
     //stupid random
     
-    Group group(NID_secp256k1);
-    Point A(group),B(group);
-    Point g(group);
-    group.get_generator(g);
+    Group G(NID_secp256k1);
+    Point A,B;
+    Point g;
+    G.init(A);
+    G.init(B);
+    G.init(g);
+    G.get_generator(g);
 
-    
     A=g;
 
-    A.mul(a);
+    G.mul(A,A,a);
     //send A
     if(c==0){
         B=g;
-        B.mul(b);
+        G.mul(B,B,b);
     }else{
         B=g;
-        B.mul(b);
-        B.add(A);
+        G.mul(B,B,b);
+        G.add(B,B,A);
     }
 
-    Point t0(group);
+    Point t0;
+    G.init(t0);
     t0=A;
-    t0.mul(b);
-    string kb=H(t0);
+    G.mul(t0,t0,b);
+    string kb=H(G,t0);
 
     
     //send B
-    Point t1(group),t2(group),iv(group);
+    Point t1,t2,iv;
+    G.init(t1);
+    G.init(t2);
+    G.init(iv);
     t1=B;
-    t1.mul(a);
+    G.mul(t1,t1,a);
 
     
     
     t2=B;
 
     iv=A;
-    iv.inv();
-    t2.add(iv);
+    G.inv(iv,iv);
+    G.add(t2,t2,iv);
 
-    t2.mul(a);
-    string k0=H(t1);
-    string k1=H(t2);
+    G.mul(t2,t2,a);
+    string k0=H(G,t1);
+    string k1=H(G,t2);
 
     string e[2];
     e[0]=E(k0,m[0]);
@@ -84,7 +90,7 @@ int main(){
     m[0]="hello";
     m[1]="goodbye";
 
-    cout<<ot(m,0)<<endl;
+    cout<<ot(m,1)<<endl;
 
 
     return 0;

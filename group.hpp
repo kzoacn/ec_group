@@ -50,6 +50,7 @@ public:
     }
     friend class Group;
     friend class Point;
+    // mod
 };
 
 
@@ -64,6 +65,8 @@ public:
 
     }
     void get_generator(Point& g);
+
+    //precomputation table for some group element
     friend class Point;
 };
 

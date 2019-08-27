@@ -6,9 +6,9 @@
 
 ## Compile 
 
-g++ ot.cpp -o ot -lssl -lcrypto
+	g++ ot.cpp -o ot -lssl -lcrypto
 
 
 ## Run
 
-./ot
+	./ot

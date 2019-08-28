@@ -25,17 +25,29 @@ void Group::mul(Point &res, const Point &lhs, const BigInt &m)
 {
     EC_POINT_mul(ec_group, res.p, NULL, lhs.p, m.n, NULL);
 }
-string Group::to_hex(const Point &p) const
+char* Group::to_hex(char* s,const Point &p) const
 {
     BigInt x, y;
     EC_POINT_get_affine_coordinates_GFp(ec_group, p.p, x.n, y.n, NULL);
-    return "(" + x.to_hex() + "," + y.to_hex() + ")";
+    char *sx,*sy;
+    sx=x.to_hex();
+    sy=y.to_hex();
+    char *res=new char[4+strlen(sx)+strlen(sy)];
+    strcat(res,"(");
+    strcat(res,sx);
+    strcat(res,",");
+    strcat(res,sy);
+    strcat(res,")");
+    return res;
 }
 
-void Group::from_hex(Point &p,const string &s) const
+void Group::from_hex(Point &p,const char *s) const
 {
     BigInt x, y;
-    for(int i=0;i<(int)s.length();i++){
+    int len=strlen(s);
+    char *t;
+    strcpy(t,s);
+    for(int i=0;i<len;i++){
         if(s[i]==','){
             x.from_hex(s.substr(1,i));
             y.from_hex(s.substr(i+1,s.length()-i-1));

@@ -42,24 +42,14 @@ public:
         BN_dec2bn(&n, p_str);
         delete[] p_str;
     }
-    void from_hex(const string &s)
+    void from_hex(const char *s)
     {
-
-        char *p_str;
-        p_str = new char[s.length() + 1];
-        memcpy(p_str, s.c_str(), s.length());
-        p_str[s.length()] = 0;
-        BN_hex2bn(&n, p_str);
-        delete[] p_str;
+        BN_hex2bn(&n, s);
     }
-    string to_hex()
+    char* to_hex()
     {
-
         char *number_str = BN_bn2hex(n);
-        string ans(number_str);
-        OPENSSL_free(number_str);
-
-        return ans;
+        return number_str;
     }
 
     BigInt &add(const BigInt &oth)
@@ -102,8 +92,8 @@ public:
     void add(Point &res, const Point &lhs, const Point &rhs);
     void inv(Point &res, const Point &p);
     void mul(Point &res, const Point &lhs, const BigInt &m);
-    string to_hex(const Point &p) const;
-    void from_hex(Point &p,const string &s) const;
+    char* to_hex(const Point &p) const;
+    void from_hex(Point &p,const char *s) const;
 };
 
 class Point
